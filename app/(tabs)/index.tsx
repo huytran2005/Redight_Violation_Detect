@@ -1,75 +1,130 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { auth } from "../../config/FirebaseConfig";
+const Login = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+  const signIn = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Sign in successfully");
+      router.replace("/dashboard"); 
+      
+    } catch (error: any) {
+      console.log(error);
+      alert("Sign in failed: " + error.message);
+    }
+  };
 
-export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+    <View style={{ flex: 1, backgroundColor: "#fff", padding: 20 }}>
+      <View style={{ flexDirection: "row", flex: 1 }}>
+        {/* Left section */}
+        <LinearGradient
+          colors={["#6a11cb", "#2575fc"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={{
+            flex: 1,
+            borderRadius: 12,
+            padding: 20,
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 28,
+              fontWeight: "bold",
+              color: "#fff",
+              marginBottom: 10,
+            }}
+          >
+            Sign in to
+          </Text>
+          <Text style={{ fontSize: 16, color: "#f0f0f0", marginBottom: 20 }}>
+            Lorem Ipsum is simply
+          </Text>
+          <Text style={{ fontSize: 14, color: "#e0e0e0" }}>
+            If you don’t have an account register
+          </Text>
+          <Image
+            style={{ margin: 100 }}
+            source={require("../../assets/images/image.png")}
+          />
+        </LinearGradient>
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+        {/* Right section (form) */}
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            backgroundColor: "#fafafa",
+            borderRadius: 12,
+            padding: 20,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 5,
+            elevation: 3,
+          }}
+        >
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 20 }}>
+            Sign in
+          </Text>
+
+          {/* Email */}
+          <TextInput
+            placeholder="Enter email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            style={{
+              borderWidth: 1,
+              borderColor: "#ddd",
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: 15,
+            }}
+          />
+
+          {/* Password */}
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={{
+              borderWidth: 1,
+              borderColor: "#ddd",
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: 10,
+            }}
+          />
+          {/* Login button */}
+          <TouchableOpacity
+            onPress={signIn}
+            style={{
+              backgroundColor: "#4A90E2",
+              borderRadius: 8,
+              paddingVertical: 12,
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>
+              Login
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default Login;
